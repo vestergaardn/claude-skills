@@ -1,0 +1,4 @@
+anthropics/claude-plugins-official
+vercel/vercel-plugin
+jakubkrehel/skills
+cloudflare/skills

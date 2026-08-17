@@ -1,0 +1,5 @@
+vercel-plugin@vercel
+figma@claude-plugins-official
+resend@claude-plugins-official
+interfaces@interfaces
+cloudflare@cloudflare
