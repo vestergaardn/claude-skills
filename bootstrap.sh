@@ -30,6 +30,11 @@ if [ -x "$CLAUDE_BIN" ]; then
   echo "[setup] plugins: $("$CLAUDE_BIN" plugin list 2>/dev/null | grep -c '@' || echo 0)"
 fi
 
+# Conductor's Environment UI stores the name exactly as typed, so accept the
+# likely spellings instead of silently skipping every Vercel step below.
+: "${VERCEL_TOKEN:=${VERCEL:-${Vercel:-}}}"
+export VERCEL_TOKEN
+
 # The cloud image ships no vercel CLI, so `vercel env pull` fails there unless
 # we install it. VERCEL_TOKEN comes from the Cloud Computer environment, which
 # is the only variable store that spans every repository.
