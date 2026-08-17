@@ -32,6 +32,26 @@ user-level value. Those repos must call the bootstrap themselves:
   && bash ~/.claude-setup/bootstrap.sh; }
 ```
 
+## Environment variables
+
+Conductor has no user-level variable store, and no API to write one. The only
+place that spans every repository is the **Cloud Computer environment**
+(Conductor → Settings → Cloud Computer). Keep exactly one secret there —
+`VERCEL_TOKEN` — and let each project supply the rest:
+
+1. `bootstrap.sh` installs the vercel CLI, which the cloud image lacks.
+2. It runs `vercel env pull .env.local` for any workspace holding a
+   `.vercel/project.json`, so a repo's own Vercel variables arrive with it.
+
+Per-repo, non-secret values belong in `.conductor/settings.toml`:
+
+```toml
+[environment_variables.cloud]
+CI = "1"
+```
+
+Never put a secret there — that file is committed and shared with the team.
+
 ## Updating
 
 Re-run the exporter from the Mac, then commit. Never commit `~/.claude/settings.json`:

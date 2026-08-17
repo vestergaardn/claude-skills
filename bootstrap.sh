@@ -30,11 +30,26 @@ if [ -x "$CLAUDE_BIN" ]; then
   echo "[setup] plugins: $("$CLAUDE_BIN" plugin list 2>/dev/null | grep -c '@' || echo 0)"
 fi
 
-# Repo setup scripts call `vercel env pull`; the CLI is absent from the cloud
-# image and authenticates from VERCEL_TOKEN in the Cloud Computer environment.
+# The cloud image ships no vercel CLI, so `vercel env pull` fails there unless
+# we install it. VERCEL_TOKEN comes from the Cloud Computer environment, which
+# is the only variable store that spans every repository.
 if [ -n "${VERCEL_TOKEN:-}" ] && ! command -v vercel >/dev/null 2>&1; then
   npm i -g vercel@latest >/dev/null 2>&1 && echo "[setup] vercel CLI installed" \
     || echo "[setup] vercel CLI install failed"
+fi
+
+# Pull each project's own variables rather than duplicating secrets per repo.
+# Repos whose setup script already pulls .env.local keep theirs: this runs
+# first, and the file-exists guard stops a second pull from overwriting it.
+WS="${CONDUCTOR_WORKSPACE_PATH:-$PWD}"
+if [ -n "${VERCEL_TOKEN:-}" ] && command -v vercel >/dev/null 2>&1 \
+   && [ -f "$WS/.vercel/project.json" ] && [ ! -f "$WS/.env.local" ]; then
+  if ( cd "$WS" && vercel env pull .env.local --environment=production --yes \
+         --token "$VERCEL_TOKEN" >/dev/null 2>&1 ); then
+    echo "[setup] .env.local pulled from Vercel"
+  else
+    echo "[setup] vercel env pull failed"
+  fi
 fi
 
 exit 0
