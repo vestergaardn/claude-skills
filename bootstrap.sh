@@ -15,8 +15,6 @@ mkdir -p "$CLAUDE_DIR/skills"
 cp -R "$SRC/skills/." "$CLAUDE_DIR/skills/" 2>/dev/null
 echo "[setup] skills: $(find "$CLAUDE_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 
-[ -f "$SRC/CLAUDE.md" ] && cp "$SRC/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-
 CLAUDE_BIN="$(command -v claude || echo /conductor/bin/claude)"
 if [ -x "$CLAUDE_BIN" ]; then
   # Print the tool's own error. A silent failure here costs far more to debug

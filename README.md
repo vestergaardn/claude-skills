@@ -8,7 +8,6 @@ Contents:
 | Path                | What it is                                        |
 | ------------------- | ------------------------------------------------- |
 | `skills/`           | Personal skills (gstack-owned skills excluded)     |
-| `CLAUDE.md`         | Global instructions, copied to `~/.claude/CLAUDE.md` |
 | `marketplaces.txt`  | Plugin marketplaces to register                    |
 | `plugins.txt`       | Plugins to install at user scope                   |
 | `bootstrap.sh`      | The installer the setup script runs                |
