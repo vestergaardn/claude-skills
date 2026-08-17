@@ -19,13 +19,17 @@ echo "[setup] skills: $(find "$CLAUDE_DIR/skills" -mindepth 1 -maxdepth 1 -type 
 
 CLAUDE_BIN="$(command -v claude || echo /conductor/bin/claude)"
 if [ -x "$CLAUDE_BIN" ]; then
+  # Print the tool's own error. A silent failure here costs far more to debug
+  # than the two extra lines of log it would have saved.
   while IFS= read -r m; do
     case "$m" in ""|\#*) continue ;; esac
-    "$CLAUDE_BIN" plugin marketplace add "$m" >/dev/null 2>&1 || echo "[setup] marketplace failed: $m"
+    out=$("$CLAUDE_BIN" plugin marketplace add "$m" 2>&1) \
+      || echo "[setup] marketplace failed: $m — $(printf '%s' "$out" | tail -1)"
   done < "$SRC/marketplaces.txt"
   while IFS= read -r p; do
     case "$p" in ""|\#*) continue ;; esac
-    "$CLAUDE_BIN" plugin install "$p" --scope user >/dev/null 2>&1 || echo "[setup] plugin failed: $p"
+    out=$("$CLAUDE_BIN" plugin install "$p" --scope user 2>&1) \
+      || echo "[setup] plugin failed: $p — $(printf '%s' "$out" | tail -1)"
   done < "$SRC/plugins.txt"
   echo "[setup] plugins: $("$CLAUDE_BIN" plugin list 2>/dev/null | grep -c '@' || echo 0)"
 fi
